@@ -1,23 +1,51 @@
 #include <iostream>
-#include <sys/socket.h>     // socket(), bind(), listen(), accept() - core POSIX socket API
-#include <netinet/in.h>     // sockaddr_in structure, AF_INET, htons, INADDR_ANY
-#include <unistd.h>         // close() to close the socket
+
+// Windows socket API
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
+#pragma comment(lib, "ws2_32.lib")
 
 int main()
 {
-    // Step 1: Create socket
+    // Step 1: Initialize Winsock
+    WSADATA wsaData;
+    int wsaResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-    // Step 2: Bind to port
+    if (wsaResult != 0)
+    {
+        std::cerr << "WSAStartup failed: " << wsaResult << std::endl;
+        return 1;
+    }
 
-    // Step 3: Listen
+    std::cout << "Winsock initialized" << std::endl;
 
-    // Step 4: Accept client connection
+    // Step 2: Create socket
+    SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-    // Step 5: Read HTTP request
+    if (sock == INVALID_SOCKET)
+    {
+        std::cerr << "Socket creation failed: "
+                  << WSAGetLastError() << std::endl;
+        WSACleanup();
+        return 1;
+    }
 
-    // Step 6: Send HTTP response
+    std::cout << "Socket created" << std::endl;
 
-    // Step 7: Close connection
+
+
+    // Step 3: Bind to port
+    // Step 4: Listen for connections
+    // Step 5: Accept client
+    // Step 6: Read request
+    // Step 7: Send response
+
+
+
+    // Step 8: Cleanup
+    closesocket(sock);
+    WSACleanup();
 
     return 0;
 }
