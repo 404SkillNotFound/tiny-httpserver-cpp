@@ -36,9 +36,13 @@ int main()
 
 
     // Step 3: Bind to port
+
     // Step 4: Listen for connections
+
     // Step 5: Accept client
+
     // Step 6: Read request
+
     // Step 7: Send response
 
 
