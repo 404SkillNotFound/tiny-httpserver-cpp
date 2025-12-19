@@ -36,6 +36,30 @@ int main()
 
 
     // Step 3: Bind to port
+    sockaddr_in serverAddress;
+    memset(&serverAddress, 0, sizeof(serverAddress));
+
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_addr.s_addr = INADDR_ANY;
+    serverAddress.sin_port = htons(8080);
+
+    int bindResult = bind(
+        sock,
+        reinterpret_cast<sockaddr*>(&serverAddress),
+        sizeof(serverAddress)
+    );
+
+    if (bindResult != 0) {
+        std::cerr << "Bind failed: " << WSAGetLastError() << '\n';
+        closesocket(sock);
+        WSACleanup();
+        return 1;
+
+    }
+    std::cout << "Socket Bound to port 8080" << '\n';
+
+
+
 
     // Step 4: Listen for connections
 
