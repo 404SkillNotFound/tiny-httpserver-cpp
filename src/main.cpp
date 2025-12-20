@@ -66,7 +66,25 @@ int main()
 
 
     // Step 5: Accept client
+    sockaddr_in clientAddress;
+    int clientAddressLen = sizeof(clientAddress);
 
+    SOCKET clientSocket = accept(
+        sock,
+        reinterpret_cast<sockaddr*>(&clientAddress),
+        &clientAddressLen
+    );
+
+    if (clientSocket == INVALID_SOCKET) {
+        std::cerr << "Accept failed: " << WSAGetLastError() << '\n';
+        closesocket(sock);
+        WSACleanup();
+        return 1;
+    }
+
+    std::cout << "Accepted connection from "
+              << inet_ntoa(clientAddress.sin_addr)
+              << '\n';
     // Step 6: Read request
 
     // Step 7: Send response
