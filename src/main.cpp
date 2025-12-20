@@ -14,7 +14,7 @@ int main()
 
     if (wsaResult != 0)
     {
-        std::cerr << "WSAStartup failed: " << wsaResult << std::endl;
+        std::cerr << "WSAStartup failed: " << wsaResult << '\n';
         return 1;
     }
 
@@ -26,12 +26,12 @@ int main()
     if (sock == INVALID_SOCKET)
     {
         std::cerr << "Socket creation failed: "
-                  << WSAGetLastError() << std::endl;
+                  << WSAGetLastError() << '\n';
         WSACleanup();
         return 1;
     }
 
-    std::cout << "Socket created" << std::endl;
+    std::cout << "Socket created" << '\n';
 
 
 
@@ -62,6 +62,8 @@ int main()
 
 
     // Step 4: Listen for connections
+    int listenResult = listen(sock, 5);                               //chose backlog = 5 for a basic server
+
 
     // Step 5: Accept client
 
