@@ -86,6 +86,14 @@ int main()
               << inet_ntoa(clientAddress.sin_addr)
               << '\n';
     // Step 6: Read request
+    char buffer[4096];
+    int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
+
+    if (bytesReceived > 0)
+    {
+        std::cout.write(buffer, bytesReceived);
+    }
+
 
     // Step 7: Send response
 
