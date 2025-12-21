@@ -121,13 +121,37 @@ int main()
             "<head>"
             "<title>Index</title>"
             "<style>"
-            "body { font-family: system-ui; padding: 40px; }"
+            "html, body { height: 100%; margin: 0; }"
+            "body {"
+            "  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;"
+            "  background: #f6f7f9;"
+            "  display: flex;"
+            "  align-items: center;"
+            "  justify-content: center;"
+            "}"
+            ".card {"
+            "  background: #ffffff;"
+            "  padding: 32px 40px;"
+            "  border-radius: 8px;"
+            "  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);"
+            "  max-width: 420px;"
+            "}"
+            "h1 {"
+            "  margin-top: 0;"
+            "  font-weight: 600;"
+            "}"
+            "p {"
+            "  color: #444;"
+            "  line-height: 1.6;"
+            "}"
             "</style>"
             "</head>"
             "<body>"
+            "<div class='card'>"
             "<h1>Hello</h1>"
             "<p>If this loaded, something went right.</p>"
             "<p>Let us not investigate further.</p>"
+            "</div>"
             "</body>"
             "</html>";
 
@@ -152,9 +176,9 @@ int main()
          static_cast<int>(response.size()),
          0);
 
-
     shutdown(clientSocket, SD_SEND);
     closesocket(clientSocket);
+
 
     // Step 8: Cleanup
     closesocket(sock);
