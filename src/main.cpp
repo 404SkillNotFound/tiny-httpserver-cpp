@@ -85,15 +85,37 @@ int main()
     std::cout << "Accepted connection from "
               << inet_ntoa(clientAddress.sin_addr)
               << '\n';
+
+    std::cout << "Waiting for incoming connections..." << '\n';
+
+
     // Step 6: Read request
     char buffer[4096];
-    int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
+    std::string request;
 
-    if (bytesReceived > 0)
+    while (true)
     {
-        std::cout.write(buffer, bytesReceived);
-    }
+        int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
 
+        if (bytesReceived > 0)
+        {
+            request.append(buffer, bytesReceived);
+
+            if (request.find("\r\n\r\n") != std::string::npos)
+                break;
+        }
+        else if (bytesReceived == 0)
+        {
+            break; // client closed connection
+        }
+        else
+        {
+            std::cerr << "recv failed\n";
+            closesocket(sock);
+            WSACleanup();
+            return 1;
+        }
+    }
 
     // Step 7: Send response
 
