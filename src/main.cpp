@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <string>
 // Windows socket API
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -62,7 +62,7 @@ int main()
 
 
     // Step 4: Listen for connections
-    int listenResult = listen(sock, 5);                               //chose backlog = 5 for a basic server
+    int listenResult = listen(sock, 5);         //chose backlog = 5
 
 
     // Step 5: Accept client
@@ -118,7 +118,33 @@ int main()
     }
 
     // Step 7: Send response
+    std::string body =
+     "<!DOCTYPE html>"
+     "<html>"
+     "<head>"
+     "<title>Index</title>"
+     "<style>"
+     "body { font-family: system-ui; padding: 40px; }"
+     "</style>"
+     "</head>"
+     "<body>"
+     "<h1>Hello</h1>"
+     "<p>If this loaded, something went right.</p>"
+     "<p>Let’s not investigate further.</p>"
+     "</body>"
+     "</html>";
 
+    std::string response =
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/html\r\n"
+        "Content-Length: " + std::to_string(body.size()) + "\r\n"
+        "\r\n" +
+        body;
+
+    send(clientSocket,
+         response.c_str(),
+         static_cast<int>(response.size()),
+         0);
 
 
     // Step 8: Cleanup
