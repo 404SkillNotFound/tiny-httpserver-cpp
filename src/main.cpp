@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+
 // Windows socket API
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -33,8 +34,6 @@ int main()
 
     std::cout << "Socket created" << '\n';
 
-
-
     // Step 3: Bind to port
     sockaddr_in serverAddress;
     memset(&serverAddress, 0, sizeof(serverAddress));
@@ -54,16 +53,12 @@ int main()
         closesocket(sock);
         WSACleanup();
         return 1;
-
     }
+
     std::cout << "Socket Bound to port 8080" << '\n';
 
-
-
-
     // Step 4: Listen for connections
-    int listenResult = listen(sock, 5);         //chose backlog = 5
-
+    listen(sock, 5);
 
     // Step 5: Accept client
     sockaddr_in clientAddress;
@@ -86,9 +81,6 @@ int main()
               << inet_ntoa(clientAddress.sin_addr)
               << '\n';
 
-    std::cout << "Waiting for incoming connections..." << '\n';
-
-
     // Step 6: Read request
     char buffer[4096];
     std::string request;
@@ -106,11 +98,12 @@ int main()
         }
         else if (bytesReceived == 0)
         {
-            break; // client closed connection
+            break;
         }
         else
         {
             std::cerr << "recv failed\n";
+            closesocket(clientSocket);
             closesocket(sock);
             WSACleanup();
             return 1;
@@ -118,34 +111,50 @@ int main()
     }
 
     // Step 7: Send response
-    std::string body =
-     "<!DOCTYPE html>"
-     "<html>"
-     "<head>"
-     "<title>Index</title>"
-     "<style>"
-     "body { font-family: system-ui; padding: 40px; }"
-     "</style>"
-     "</head>"
-     "<body>"
-     "<h1>Hello</h1>"
-     "<p>If this loaded, something went right.</p>"
-     "<p>Let’s not investigate further.</p>"
-     "</body>"
-     "</html>";
+    std::string response;
 
-    std::string response =
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/html\r\n"
-        "Content-Length: " + std::to_string(body.size()) + "\r\n"
-        "\r\n" +
-        body;
+    if (request.rfind("GET / ", 0) == 0)
+    {
+        std::string body =
+            "<!DOCTYPE html>"
+            "<html>"
+            "<head>"
+            "<title>Index</title>"
+            "<style>"
+            "body { font-family: system-ui; padding: 40px; }"
+            "</style>"
+            "</head>"
+            "<body>"
+            "<h1>Hello</h1>"
+            "<p>If this loaded, something went right.</p>"
+            "<p>Let us not investigate further.</p>"
+            "</body>"
+            "</html>";
+
+        response =
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Type: text/html\r\n"
+            "Content-Length: " + std::to_string(body.size()) + "\r\n"
+            "\r\n" +
+            body;
+    }
+    else
+    {
+        response =
+            "HTTP/1.1 404 Not Found\r\n"
+            "Content-Length: 9\r\n"
+            "\r\n"
+            "Not Found";
+    }
 
     send(clientSocket,
          response.c_str(),
          static_cast<int>(response.size()),
          0);
 
+
+    shutdown(clientSocket, SD_SEND);
+    closesocket(clientSocket);
 
     // Step 8: Cleanup
     closesocket(sock);
